@@ -1,10 +1,7 @@
 # Company Name: Slack
 # Solves one problem extremely well
 - Creates better communication between teams
-- The customers are any workspace teams that communicate
-- Doesn't have anything too hard to implement on the front end
-- Yes we are familiar with most of the required infrastructure
-- There is an AI chatbot that helps with threads and summarizing channels
+- Teams need to talk to eachother Async and creates a platform where teams and subgroups of the team can communicate
 
 # You know its Customers
 - Slack customers are teams that communicate frequently
