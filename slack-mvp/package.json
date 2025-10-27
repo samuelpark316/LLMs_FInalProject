@@ -1,0 +1,43 @@
+{
+  "name": "slack-mvp",
+  "version": "1.0.0",
+  "description": "A simplified team communication platform with AI-powered summarization - Communication into Knowledge",
+  "private": true,
+  "author": "Your Name",
+  "license": "MIT",
+  "keywords": [
+    "slack",
+    "communication",
+    "ai",
+    "summarization",
+    "nextjs",
+    "typescript",
+    "tailwind"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.548.0",
+    "next": "16.0.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
