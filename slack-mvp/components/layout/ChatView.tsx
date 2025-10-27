@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Sparkles } from 'lucide-react';
+import { Menu, Sparkles, ChevronDown } from 'lucide-react';
 import { CHANNELS, USERS } from '../../constants/mockData';
 import { fetchChannelMessages, fetchAiSummary } from '../../api/mockApi';
 import { Message as MessageComponent } from '../ui/Message';
@@ -125,34 +125,37 @@ export const ChatView: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col h-screen bg-primary-light">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-white">
-        <div className="flex items-center gap-3">
+      {/* Header - Slack Style */}
+      <header className="flex items-center justify-between px-5 py-3 border-b border-[#E0E0E0] bg-white shadow-sm">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Mobile menu button */}
           <button
             onClick={toggleSidebar}
             className="lg:hidden p-2 hover:bg-gray-100 rounded transition-colors"
           >
-            <Menu size={20} className="text-text-primary" />
+            <Menu size={20} className="text-[#1D1C1D]" />
           </button>
 
-          <div>
-            <h2 className="text-lg font-semibold text-text-primary">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <h2 className="text-[18px] font-bold text-[#1D1C1D] truncate">
               # {selectedChannel.name}
             </h2>
-            <p className="text-xs text-text-secondary">{selectedChannel.description}</p>
+            <button className="p-1 hover:bg-gray-100 rounded">
+              <ChevronDown size={18} className="text-[#616061]" />
+            </button>
           </div>
         </div>
 
-        {/* AI Summarize button */}
-        <button
-          onClick={handleSummarizeClick}
-          className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-[#2bb0d6] transition-colors text-sm font-medium"
-        >
-          <Sparkles size={18} />
-          <span className="hidden sm:inline">Summarize Channel</span>
-          <span className="sm:hidden">AI</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* AI Summarize button - Slack style */}
+          <button
+            onClick={handleSummarizeClick}
+            className="flex items-center gap-2 px-4 py-2 bg-[#36C5F0] text-white rounded-md hover:bg-[#2EB67D] transition-colors text-[15px] font-bold shadow-sm"
+          >
+            <Sparkles size={18} />
+            <span className="hidden sm:inline">Summarize</span>
+          </button>
+        </div>
       </header>
 
       {/* Messages area */}
