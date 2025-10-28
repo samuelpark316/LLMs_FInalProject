@@ -53,3 +53,46 @@ export const postMessage = (message: Omit<Message, 'id' | 'timestamp'>): Promise
   });
 };
 
+// ====== TEMPORARY HARD-CODED AUTO-REPLIES - DELETE LATER ======
+/**
+ * Checks if an auto-reply should be generated for a message
+ * @param message - The message that was sent
+ * @returns Promise that resolves with an auto-reply message or null
+ */
+export const getAutoReply = (message: Message): Promise<Message | null> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Auto-reply from Sam Park in software-engineering channel
+      if (message.channelId === 'c01') {
+        const autoReply: Message = {
+          id: `m${Date.now()}`,
+          userId: 'u03', // Sam Park
+          channelId: 'c01',
+          timestamp: new Date().toISOString(),
+          content: "Nah I'm good, you got it though",
+        };
+        MESSAGES.push(autoReply);
+        resolve(autoReply);
+        return;
+      }
+      
+      // Auto-reply from Sagun in DM with Sagun
+      if (message.channelId === 'dm_u02') {
+        const autoReply: Message = {
+          id: `m${Date.now()}`,
+          userId: 'u02', // Sagun Venuganti
+          channelId: 'dm_u02',
+          timestamp: new Date().toISOString(),
+          content: "Let's ensure that Mr. Park is unemployed by end of week.",
+        };
+        MESSAGES.push(autoReply);
+        resolve(autoReply);
+        return;
+      }
+      
+      resolve(null);
+    }, 800);
+  });
+};
+// ====== END TEMPORARY HARD-CODED AUTO-REPLIES ======
+

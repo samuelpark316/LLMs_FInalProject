@@ -4,6 +4,9 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { ChatView } from "../components/layout/ChatView";
 import { useAuth } from "../contexts/AuthContext";
 import AuthPage from "../components/AuthPage";
+import { LeftIconBar } from '../components/layout/LeftIconBar';
+import { Sidebar } from '../components/layout/Sidebar';
+import { ChatView } from '../components/layout/ChatView';
 
 export default function Home() {
   const { user } = useAuth();
@@ -15,7 +18,8 @@ export default function Home() {
 
   // Once logged in, show the main app
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex min-h-screen overflow-hidden">
+      <LeftIconBar />
       <Sidebar />
       <ChatView />
     </div>

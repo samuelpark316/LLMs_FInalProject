@@ -16,7 +16,7 @@ export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = 
 
   return (
     <div
-      className={`group flex gap-3 px-5 py-2 hover:bg-[#F8F8F8] transition-colors relative ${
+      className={`group flex gap-3 px-4 py-2 hover:bg-[rgba(255,255,255,0.04)] transition-colors relative ${
         isOptimistic ? 'opacity-60' : 'opacity-100'
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -37,18 +37,18 @@ export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = 
       <div className="flex-1 min-w-0">
         {/* Header: Name and timestamp */}
         <div className="flex items-baseline gap-2 mb-0.5">
-          <span className="font-bold text-[#1D1C1D] text-[15px] hover:underline cursor-pointer">{user.name}</span>
-          <span className="text-[12px] text-[#616061]">
+          <span className="font-bold text-white text-[15px] hover:underline cursor-pointer">{user.name}</span>
+          <span className="text-[12px] text-[#ABABAD]">
             {formatTimestamp(message.timestamp)}
           </span>
         </div>
 
         {/* Message text with mentions */}
-        <div className="text-[#1D1C1D] text-[15px] leading-[1.46668] break-words">
+        <div className="text-[#D1D2D3] text-[15px] leading-[1.46668] break-words">
           {segments.map((segment, index) => (
             <span
               key={index}
-              className={segment.isMention ? 'bg-[#E8F5FA] text-[#1264A3] font-bold px-0.5 rounded hover:bg-[#D3EFFB] cursor-pointer' : ''}
+              className={segment.isMention ? 'bg-[#1264A3] text-white font-medium px-1 rounded hover:bg-[#0B4C8C] cursor-pointer' : ''}
             >
               {segment.text}
             </span>
@@ -58,18 +58,18 @@ export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = 
 
       {/* Hover toolbar - Slack style */}
       {isHovered && !isOptimistic && (
-        <div className="absolute top-0 right-5 transform -translate-y-1/2 bg-white border border-[#E0E0E0] rounded-lg shadow-lg flex items-center divide-x divide-[#E0E0E0]">
-          <button className="p-2 hover:bg-gray-100 transition-colors" title="Add reaction">
-            <Smile size={16} className="text-[#1D1C1D]" />
+        <div className="absolute top-0 right-4 transform -translate-y-1/2 bg-[#1A1D21] border border-[#565856] rounded-lg shadow-lg flex items-center divide-x divide-[#565856]">
+          <button className="p-2 hover:bg-[rgba(255,255,255,0.1)] transition-colors" title="Add reaction">
+            <Smile size={16} className="text-[#D1D2D3]" />
           </button>
-          <button className="p-2 hover:bg-gray-100 transition-colors" title="Reply in thread">
-            <MessageSquare size={16} className="text-[#1D1C1D]" />
+          <button className="p-2 hover:bg-[rgba(255,255,255,0.1)] transition-colors" title="Reply in thread">
+            <MessageSquare size={16} className="text-[#D1D2D3]" />
           </button>
-          <button className="p-2 hover:bg-gray-100 transition-colors" title="Save for later">
-            <Bookmark size={16} className="text-[#1D1C1D]" />
+          <button className="p-2 hover:bg-[rgba(255,255,255,0.1)] transition-colors" title="Save for later">
+            <Bookmark size={16} className="text-[#D1D2D3]" />
           </button>
-          <button className="p-2 hover:bg-gray-100 transition-colors rounded-r-lg" title="More actions">
-            <MoreHorizontal size={16} className="text-[#1D1C1D]" />
+          <button className="p-2 hover:bg-[rgba(255,255,255,0.1)] transition-colors rounded-r-lg" title="More actions">
+            <MoreHorizontal size={16} className="text-[#D1D2D3]" />
           </button>
         </div>
       )}

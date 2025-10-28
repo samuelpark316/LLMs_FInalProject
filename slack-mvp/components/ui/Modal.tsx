@@ -52,24 +52,16 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Modal content */}
-      <div
-        className={`relative bg-white rounded-lg shadow-2xl w-full ${maxWidthClasses[maxWidth]} mx-4 max-h-[90vh] overflow-hidden flex flex-col`}
-      >
+    <div className="fixed inset-0 z-50 flex items-start justify-end pointer-events-none">
+      {/* Right side panel */}
+      <div className="relative bg-[#1A1D21] w-full max-w-[480px] h-full shadow-2xl flex flex-col border-l border-[#565856] pointer-events-auto">
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
-            <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#565856]">
+            <h2 className="text-[15px] font-bold text-white">{title}</h2>
             <button
               onClick={onClose}
-              className="text-text-secondary hover:text-text-primary transition-colors p-1 rounded hover:bg-gray-100"
+              className="text-[#D1D2D3] hover:text-white transition-colors p-1.5 rounded hover:bg-[rgba(255,255,255,0.1)]"
             >
               <X size={20} />
             </button>
@@ -77,7 +69,7 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Body */}
-        <div className="overflow-y-auto flex-1 px-6 py-4">{children}</div>
+        <div className="overflow-y-auto flex-1 px-5 py-5 bg-[#1A1D21]">{children}</div>
       </div>
     </div>
   );
