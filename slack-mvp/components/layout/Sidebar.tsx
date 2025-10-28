@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import { Hash, ChevronDown, ChevronRight } from 'lucide-react';
@@ -35,7 +35,11 @@ export const Sidebar: React.FC = () => {
           w-[240px] bg-[#19171D] text-[#CFC9C2] pt-0 border-r border-[#2B2C31]
           flex flex-col h-screen
           transform transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${
+            isSidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
         `}
       >
         {/* Workspace name */}
@@ -137,8 +141,26 @@ export const Sidebar: React.FC = () => {
           </div>
 
         </div>
+
+        {/* User section with logout - Fixed at bottom */}
+        <div className="px-3 py-3 border-t border-[#3E313C]">
+          <div className="flex items-center justify-between px-3 py-2 bg-[#3E313C] rounded">
+            <div className="flex flex-col min-w-0">
+              <span className="text-[13px] font-semibold text-white truncate">
+                {user?.email || "User"}
+              </span>
+              <span className="text-[11px] text-[#D1B8CF]">Active</span>
+            </div>
+            <button
+              onClick={logout}
+              className="ml-2 p-1.5 text-[#D1B8CF] hover:text-white hover:bg-[#4D394B] rounded transition-colors"
+              title="Log out"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
       </aside>
     </>
   );
 };
-
