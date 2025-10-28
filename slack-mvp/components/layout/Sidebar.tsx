@@ -6,7 +6,7 @@ import { CHANNELS, USERS, CURRENT_USER_ID } from '../../constants/mockData';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
 
 export const Sidebar: React.FC = () => {
-  const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar } = useWorkspace();
+  const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar, closeSearchModal, closeSearchDropdown } = useWorkspace();
   const [channelsExpanded, setChannelsExpanded] = useState(true);
   const [dmsExpanded, setDmsExpanded] = useState(true);
   const currentUser = USERS.find((u) => u.id === CURRENT_USER_ID);
@@ -18,6 +18,8 @@ export const Sidebar: React.FC = () => {
   const handleChannelClick = (channelId: string) => {
     setSelectedChannelId(channelId);
     closeSidebar(); // Close sidebar on mobile after selection
+    closeSearchModal(); // Close search modal if open
+    closeSearchDropdown(); // Close search dropdown if open
   };
 
   // Filter out current user from DM list
@@ -38,7 +40,7 @@ export const Sidebar: React.FC = () => {
         className={`
           fixed lg:static inset-y-0 left-0 z-40
           w-[240px] bg-[#19171D] text-[#CFC9C2] pt-0 border-r border-[#2B2C31]
-          flex flex-col h-screen
+          flex flex-col h-full
           transform transition-transform duration-300 ease-in-out
           ${
             isSidebarOpen

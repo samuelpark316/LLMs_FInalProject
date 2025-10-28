@@ -8,11 +8,12 @@ import { Message as MessageComponent } from '../ui/Message';
 import { MessageInput } from './MessageInput';
 import { Modal } from '../ui/Modal';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { SearchModal } from '../ui/SearchModal';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
 import { Message as MessageType } from '../../types';
 
 export const ChatView: React.FC = () => {
-  const { selectedChannelId, toggleSidebar } = useWorkspace();
+  const { selectedChannelId, toggleSidebar, openSearchDropdown } = useWorkspace();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
@@ -41,6 +42,19 @@ export const ChatView: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Keyboard shortcut for search (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openSearchDropdown();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openSearchDropdown]);
 
   const handleMessageSent = (newMessage: MessageType) => {
     setMessages((prev) => [...prev, newMessage]);
@@ -141,7 +155,7 @@ export const ChatView: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen bg-[#1A1D21]">
+    <div className="flex-1 flex flex-col h-full bg-[#1A1D21]">
       {/* Header */}
       <header className="flex flex-col border-b border-[#565856] bg-[#1A1D21]">
         {/* Top bar */}
@@ -155,38 +169,10 @@ export const ChatView: React.FC = () => {
               <Menu size={20} className="text-[#D1D2D3]" />
             </button>
 
-            {/* History buttons */}
-            <div className="hidden sm:flex items-center gap-1">
-              <button className="p-1.5 hover:bg-[rgba(255,255,255,0.1)] rounded transition-colors">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-[#D1D2D3]">
-                  <path d="M7.5 2L3.5 6L7.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <button className="p-1.5 hover:bg-[rgba(255,255,255,0.1)] rounded transition-colors">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-[#D1D2D3]">
-                  <path d="M4.5 2L8.5 6L4.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
-
-            {/* Search bar */}
-            <div className="flex-1 max-w-[732px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search Golden"
-                  className="w-full h-[28px] px-3 pr-8 bg-[#522653] border border-transparent hover:border-[#663F68] focus:border-[#1164A3] focus:shadow-[0_0_0_1px_#1164A3] rounded text-[13px] placeholder-[#D1D2D3] text-[#D1D2D3] outline-none"
-                />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
-                  <kbd className="text-[12px] text-[#D1D2D3] font-normal">⌘</kbd>
-                  <kbd className="text-[12px] text-[#D1D2D3] font-normal">K</kbd>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right section */}
-          <div className="flex items-center gap-2 mr-4">
+          <div className="flex items-center gap-2 mr-4 ml-auto">
             {/* AI Summarize button */}
             <button
               onClick={handleSummarizeClick}
@@ -256,6 +242,7 @@ export const ChatView: React.FC = () => {
           <div className="max-w-none leading-relaxed">{renderSummaryContent(summaryContent)}</div>
         )}
       </Modal>
+
     </div>
   );
 };

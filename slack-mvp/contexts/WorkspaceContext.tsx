@@ -10,6 +10,13 @@ interface WorkspaceContextType {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
   closeSidebar: () => void;
+  isSearchDropdownOpen: boolean;
+  isSearchModalOpen: boolean;
+  searchQuery: string;
+  openSearchDropdown: () => void;
+  closeSearchDropdown: () => void;
+  openSearchModal: (query?: string) => void;
+  closeSearchModal: () => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
@@ -17,6 +24,9 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefin
 export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedChannelId, setSelectedChannelId] = useState<string>(CHANNELS[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState<boolean>(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -26,6 +36,26 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     setIsSidebarOpen(false);
   };
 
+  const openSearchDropdown = () => {
+    setIsSearchDropdownOpen(true);
+    setIsSearchModalOpen(false);
+  };
+
+  const closeSearchDropdown = () => {
+    setIsSearchDropdownOpen(false);
+  };
+
+  const openSearchModal = (query: string = '') => {
+    setSearchQuery(query);
+    setIsSearchDropdownOpen(false);
+    setIsSearchModalOpen(true);
+  };
+
+  const closeSearchModal = () => {
+    setIsSearchModalOpen(false);
+    setSearchQuery('');
+  };
+
   const value: WorkspaceContextType = {
     currentUserId: CURRENT_USER_ID,
     selectedChannelId,
@@ -33,6 +63,13 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     isSidebarOpen,
     toggleSidebar,
     closeSidebar,
+    isSearchDropdownOpen,
+    isSearchModalOpen,
+    searchQuery,
+    openSearchDropdown,
+    closeSearchDropdown,
+    openSearchModal,
+    closeSearchModal,
   };
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
