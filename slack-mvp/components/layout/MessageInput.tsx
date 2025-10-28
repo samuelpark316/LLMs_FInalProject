@@ -2,7 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { Smile, AtSign, Bold, Italic, Strikethrough, Link2, List, ListOrdered, AlignLeft, Code } from 'lucide-react';
-import { postMessage } from '../../api/mockApi';
+import { postMessage, getAutoReply } from '../../api/mockApi'; // TEMP: added getAutoReply
 import { Message } from '../../types';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
 
@@ -42,6 +42,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ channelId, channelNa
         channelId,
         content: trimmedMessage,
       });
+      
+      // ====== TEMPORARY HARD-CODED AUTO-REPLIES - DELETE LATER ======
+      const autoReply = await getAutoReply(optimisticMessage);
+      if (autoReply) {
+        onMessageSent(autoReply);
+      }
+      // ====== END TEMPORARY HARD-CODED AUTO-REPLIES ======
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
