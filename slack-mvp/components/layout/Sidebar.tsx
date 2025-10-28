@@ -1,12 +1,28 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Hash, ChevronDown, Plus, MessageSquare, Clock, Bookmark, MoreHorizontal } from 'lucide-react';
-import { CHANNELS, USERS, CURRENT_USER_ID } from '../../constants/mockData';
-import { useWorkspace } from '../../contexts/WorkspaceContext';
+import React from "react";
+import {
+  Hash,
+  ChevronDown,
+  Plus,
+  MessageSquare,
+  Clock,
+  Bookmark,
+  MoreHorizontal,
+  LogOut,
+} from "lucide-react";
+import { CHANNELS, USERS, CURRENT_USER_ID } from "../../constants/mockData";
+import { useWorkspace } from "../../contexts/WorkspaceContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export const Sidebar: React.FC = () => {
-  const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar } = useWorkspace();
+  const {
+    selectedChannelId,
+    setSelectedChannelId,
+    isSidebarOpen,
+    closeSidebar,
+  } = useWorkspace();
+  const { user, logout } = useAuth();
 
   const handleChannelClick = (channelId: string) => {
     setSelectedChannelId(channelId);
@@ -31,9 +47,13 @@ export const Sidebar: React.FC = () => {
           fixed lg:static inset-y-0 left-0 z-40
           w-[260px] flex flex-col h-screen
           transform transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${
+            isSidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
         `}
-        style={{ backgroundColor: '#4D394B' }}
+        style={{ backgroundColor: "#4D394B" }}
       >
         {/* Workspace Header */}
         <div className="px-4 py-3 border-b border-[#3E313C]">
@@ -87,12 +107,12 @@ export const Sidebar: React.FC = () => {
                     rounded transition-colors text-left group
                     ${
                       selectedChannelId === channel.id
-                        ? 'bg-[#38978D] text-white font-bold'
-                        : 'text-[#D1B8CF] hover:bg-[#3E313C]'
+                        ? "bg-[#38978D] text-white font-bold"
+                        : "text-[#D1B8CF] hover:bg-[#3E313C]"
                     }
                   `}
                 >
-                  <Hash size={16} className="flex-shrink-0" />
+                  <Hash size={16} className="shrink-0" />
                   <span className="text-[15px] truncate flex-1">
                     {channel.name}
                   </span>
@@ -117,7 +137,7 @@ export const Sidebar: React.FC = () => {
                   key={user.id}
                   className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors text-left"
                 >
-                  <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
                   <span className="text-[15px] truncate">{user.name}</span>
                 </button>
               ))}
@@ -128,8 +148,26 @@ export const Sidebar: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* User section with logout - Fixed at bottom */}
+        <div className="px-3 py-3 border-t border-[#3E313C]">
+          <div className="flex items-center justify-between px-3 py-2 bg-[#3E313C] rounded">
+            <div className="flex flex-col min-w-0">
+              <span className="text-[13px] font-semibold text-white truncate">
+                {user?.email || "User"}
+              </span>
+              <span className="text-[11px] text-[#D1B8CF]">Active</span>
+            </div>
+            <button
+              onClick={logout}
+              className="ml-2 p-1.5 text-[#D1B8CF] hover:text-white hover:bg-[#4D394B] rounded transition-colors"
+              title="Log out"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
       </aside>
     </>
   );
 };
-

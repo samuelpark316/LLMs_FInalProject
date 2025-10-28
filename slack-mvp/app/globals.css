@@ -1,25 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap");
 @import "tailwindcss";
 
 :root {
   /* Slack Color System - Aubergine Theme */
-  --sidebar-bg: #4D394B;
-  --sidebar-text: #FFFFFF;
-  --sidebar-text-muted: #D1B8CF;
-  --active-item: #38978D;
-  --active-text: #FFFFFF;
-  --main-bg: #FFFFFF;
-  --main-text: #1D1C1D;
+  --sidebar-bg: #4d394b;
+  --sidebar-text: #ffffff;
+  --sidebar-text-muted: #d1b8cf;
+  --active-item: #38978d;
+  --active-text: #ffffff;
+  --main-bg: #ffffff;
+  --main-text: #1d1c1d;
   --main-text-muted: #616061;
-  --mention-badge: #E01E5A;
-  --hover-bg: #3E313C;
-  --border-color: #E0E0E0;
-  
+  --mention-badge: #e01e5a;
+  --hover-bg: #3e313c;
+  --border-color: #e0e0e0;
+
   /* Slack Brand Colors */
-  --slack-blue: #36C5F0;
-  --slack-green: #2EB67D;
-  --slack-red: #E01E5A;
-  --slack-yellow: #ECB22E;
+  --slack-blue: #36c5f0;
+  --slack-green: #2eb67d;
+  --slack-red: #e01e5a;
+  --slack-yellow: #ecb22e;
 }
 
 @theme inline {
@@ -30,17 +30,15 @@
   --color-main-text: var(--main-text);
   --color-mention-badge: var(--mention-badge);
   --color-slack-blue: var(--slack-blue);
-  --font-lato: 'Lato', sans-serif;
+  --font-lato: "Lato", sans-serif;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;

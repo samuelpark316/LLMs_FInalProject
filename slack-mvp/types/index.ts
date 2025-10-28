@@ -25,3 +25,12 @@ export interface AiSummary {
   content: string; // Can be Markdown formatted
 }
 
+// Auth-related types
+export interface AuthUser {
+  email: string;
+}
+
+export interface LoginResult {
+  ok: boolean;
+  error?: string;
+}
