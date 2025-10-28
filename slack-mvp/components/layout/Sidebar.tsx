@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Hash, ChevronDown, ChevronRight } from 'lucide-react';
+import { Hash, ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import { CHANNELS, USERS, CURRENT_USER_ID } from '../../constants/mockData';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
 
@@ -9,6 +9,11 @@ export const Sidebar: React.FC = () => {
   const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar } = useWorkspace();
   const [channelsExpanded, setChannelsExpanded] = useState(true);
   const [dmsExpanded, setDmsExpanded] = useState(true);
+  const currentUser = USERS.find((u) => u.id === CURRENT_USER_ID);
+  const logout = () => {
+    // Placeholder logout for demo; in a real app, call auth signOut
+    console.log('Logout clicked');
+  };
 
   const handleChannelClick = (channelId: string) => {
     setSelectedChannelId(channelId);
@@ -147,7 +152,7 @@ export const Sidebar: React.FC = () => {
           <div className="flex items-center justify-between px-3 py-2 bg-[#3E313C] rounded">
             <div className="flex flex-col min-w-0">
               <span className="text-[13px] font-semibold text-white truncate">
-                {user?.email || "User"}
+                {currentUser?.name || "User"}
               </span>
               <span className="text-[11px] text-[#D1B8CF]">Active</span>
             </div>
