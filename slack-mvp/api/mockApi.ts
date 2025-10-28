@@ -1,5 +1,5 @@
 // Mock API functions for simulating backend interactions
-import { MESSAGES, AI_SUMMARIES } from '../constants/mockData';
+import { MESSAGES, AI_SUMMARIES, USERS } from '../constants/mockData';
 import { Message, AiSummary } from '../types';
 
 const SIMULATED_DELAY_MS = 500;
@@ -95,4 +95,68 @@ export const getAutoReply = (message: Message): Promise<Message | null> => {
   });
 };
 // ====== END TEMPORARY HARD-CODED AUTO-REPLIES ======
+
+/**
+ * Searches across all messages in the workspace
+ * @param options - Search options including query, filters, and sorting
+ * @returns Promise that resolves with an array of matching messages
+ */
+export const searchWorkspace = (options: {
+  query: string;
+  fromUserId?: string;
+  inChannelId?: string;
+  sortBy?: 'relevant' | 'newest' | 'oldest';
+}): Promise<Message[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const { query, fromUserId, inChannelId, sortBy = 'relevant' } = options;
+      
+      if (!query.trim()) {
+        resolve([]);
+        return;
+      }
+
+      const queryLower = query.toLowerCase();
+      
+      // Filter messages based on search criteria
+      let results = MESSAGES.filter((message) => {
+        // Check if message content matches query
+        const contentMatches = message.content.toLowerCase().includes(queryLower);
+        
+        // Check if user name matches query (for searching by author)
+        const user = USERS.find((u) => u.id === message.userId);
+        const userMatches = user?.name.toLowerCase().includes(queryLower);
+        
+        const matchesQuery = contentMatches || userMatches;
+        
+        // Apply filters
+        if (!matchesQuery) return false;
+        if (fromUserId && message.userId !== fromUserId) return false;
+        if (inChannelId && message.channelId !== inChannelId) return false;
+        
+        return true;
+      });
+
+      // Sort results
+      if (sortBy === 'newest') {
+        results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      } else if (sortBy === 'oldest') {
+        results.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      } else {
+        // 'relevant' - prioritize exact matches in content
+        results.sort((a, b) => {
+          const aExactMatch = a.content.toLowerCase() === queryLower;
+          const bExactMatch = b.content.toLowerCase() === queryLower;
+          if (aExactMatch && !bExactMatch) return -1;
+          if (!aExactMatch && bExactMatch) return 1;
+          
+          // Then by recency
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        });
+      }
+
+      resolve(results);
+    }, SIMULATED_DELAY_MS);
+  });
+};
 

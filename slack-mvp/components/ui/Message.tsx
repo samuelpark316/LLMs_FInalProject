@@ -8,11 +8,29 @@ interface MessageProps {
   message: MessageType;
   user: User;
   isOptimistic?: boolean;
+  searchQuery?: string;
 }
 
-export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = false }) => {
+export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = false, searchQuery = '' }) => {
   const [isHovered, setIsHovered] = useState(false);
   const segments = parseMessageContent(message.content);
+
+  // Helper function to highlight search query in text
+  const highlightText = (text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, index) => {
+      if (part.toLowerCase() === query.toLowerCase()) {
+        return (
+          <span key={index} className="bg-[#F2C744] text-[#1A1D21] font-semibold px-0.5 rounded">
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
 
   return (
     <div
@@ -50,7 +68,7 @@ export const Message: React.FC<MessageProps> = ({ message, user, isOptimistic = 
               key={index}
               className={segment.isMention ? 'bg-[#1264A3] text-white font-medium px-1 rounded hover:bg-[#0B4C8C] cursor-pointer' : ''}
             >
-              {segment.text}
+              {searchQuery ? highlightText(segment.text, searchQuery) : segment.text}
             </span>
           ))}
         </div>
