@@ -4,103 +4,99 @@ import { User, Channel, Message, AiSummary } from '../types';
 export const USERS: User[] = [
   {
     id: 'u01',
-    name: 'Alice Johnson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
+    name: 'Ronit Batra',
+    avatarUrl: '/Ronit.jpeg',
   },
   {
     id: 'u02',
-    name: 'Bob Smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
+    name: 'Sagun Venuganti',
+    avatarUrl: '/Sagun.jpeg',
   },
   {
     id: 'u03',
-    name: 'Carol Martinez',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carol',
-  },
-  {
-    id: 'u04',
-    name: 'David Chen',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-  },
-  {
-    id: 'u05',
-    name: 'Emma Wilson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
+    name: 'Sam Park',
+    avatarUrl: '/Sam.jpeg',
   },
 ];
 
-export const CURRENT_USER_ID = 'u01'; // Alice is the user for the demo
+export const CURRENT_USER_ID = 'u01'; // Ronit Batra is the main user
 
 export const CHANNELS: Channel[] = [
   {
     id: 'c01',
-    name: 'project-alpha',
-    description: 'Project Alpha development and coordination',
+    name: 'software-engineering',
+    description: 'Software engineering team discussions',
   },
   {
     id: 'c02',
-    name: 'general',
-    description: 'Company-wide announcements and general discussion',
+    name: 'outbound',
+    description: 'Outbound sales and marketing',
   },
   {
     id: 'c03',
-    name: 'random',
-    description: 'Non-work-related conversations and fun',
+    name: 'inbound',
+    description: 'Inbound leads and inquiries',
+  },
+  // Direct message pseudo-channels (used for rendering DM threads)
+  {
+    id: 'dm_u02',
+    name: 'Sagun Venuganti',
+    description: 'Direct message with Sagun Venuganti',
   },
   {
-    id: 'c04',
-    name: 'design',
-    description: 'Design team collaboration',
+    id: 'dm_u03',
+    name: 'Sam Park',
+    description: 'Direct message with Sam Park',
   },
 ];
 
 export const MESSAGES: Message[] = [
-  // Project Alpha channel - The star of the demo
+  // Software Engineering channel - Main demo channel
   {
     id: 'm01',
     userId: 'u02',
     channelId: 'c01',
     timestamp: '2025-10-27T08:30:00Z',
-    content: 'Morning team! Quick update: backend API deployment went smoothly last night. All endpoints are now live on staging.',
+    content: 'Morning! Quick update: backend API deployment went smoothly last night. All endpoints are now live on staging.',
   },
   {
     id: 'm02',
-    userId: 'u03',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T08:45:00Z',
-    content: 'Great work @Bob! I\'ve started testing the authentication flow. Found one small issue with the password reset email - the link is returning a 404.',
+    content: 'Great work @Sagun! I\'ve started testing the authentication flow. Found one small issue with the password reset email - the link is returning a 404.',
   },
   {
     id: 'm03',
     userId: 'u02',
     channelId: 'c01',
     timestamp: '2025-10-27T08:50:00Z',
-    content: 'Thanks for catching that @Carol. I\'ll look into the routing config. Should have a fix by noon.',
+    content: 'Thanks for catching that @Ronit! I\'ll look into the routing config. Should have a fix by noon.',
   },
   {
     id: 'm04',
-    userId: 'u04',
+    userId: 'u03',
     channelId: 'c01',
     timestamp: '2025-10-27T09:15:00Z',
     content: 'FYI - I\'ve updated the database schema to support user roles. Migration scripts are in the repo. Please run them on your local environments.',
   },
   {
     id: 'm05',
-    userId: 'u05',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T09:30:00Z',
-    content: 'Design files for the new dashboard are ready! Check Figma for the latest mockups. @Alice would love your feedback on the color scheme.',
+    content: 'Design files for the new dashboard are ready! Check Figma for the latest mockups. Would love your feedback on the color scheme @Sagun.',
   },
   {
     id: 'm06',
-    userId: 'u01',
+    userId: 'u02',
     channelId: 'c01',
     timestamp: '2025-10-27T10:00:00Z',
-    content: 'Looking at the designs now @Emma - they look fantastic! The color palette is much more accessible than v1.',
+    content: 'Looking at the designs now - they look fantastic! The color palette is much more accessible than v1.',
   },
   {
     id: 'm07',
-    userId: 'u03',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T10:45:00Z',
     content: 'Quick heads up: QA testing revealed that the mobile layout breaks on devices smaller than 375px width. Adding a fix to the sprint.',
@@ -114,28 +110,28 @@ export const MESSAGES: Message[] = [
   },
   {
     id: 'm09',
-    userId: 'u04',
+    userId: 'u03',
     channelId: 'c01',
     timestamp: '2025-10-27T11:45:00Z',
     content: 'Database performance is looking good after the optimization. Query time reduced by 60%. Stats dashboard shows everything in the green.',
   },
   {
     id: 'm10',
-    userId: 'u05',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T12:30:00Z',
     content: 'Just merged the new icon set into main. Matches our updated brand guidelines perfectly.',
   },
   {
     id: 'm11',
-    userId: 'u01',
+    userId: 'u02',
     channelId: 'c01',
     timestamp: '2025-10-27T13:00:00Z',
     content: 'Team sync at 2 PM today - let\'s review the sprint progress and plan for next week\'s release.',
   },
   {
     id: 'm12',
-    userId: 'u03',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T13:15:00Z',
     content: 'Added test coverage for the new authentication module. We\'re now at 87% overall coverage 🎉',
@@ -145,62 +141,92 @@ export const MESSAGES: Message[] = [
     userId: 'u02',
     channelId: 'c01',
     timestamp: '2025-10-27T13:45:00Z',
-    content: '@David can you review PR #234? It\'s the role-based access control implementation.',
+    content: '@Ronit can you review PR #234? It\'s the role-based access control implementation.',
   },
   {
     id: 'm14',
-    userId: 'u04',
+    userId: 'u01',
     channelId: 'c01',
     timestamp: '2025-10-27T14:00:00Z',
-    content: 'On it @Bob! Will review and provide feedback within the hour.',
+    content: 'On it @Sagun! Will review and provide feedback within the hour.',
   },
   {
     id: 'm15',
-    userId: 'u05',
+    userId: 'u03',
     channelId: 'c01',
     timestamp: '2025-10-27T14:30:00Z',
     content: 'User research session scheduled for Thursday. We\'ll be testing the new onboarding flow with 5 participants.',
   },
 
-  // General channel - a few messages for context
+  // Outbound channel
   {
     id: 'm16',
-    userId: 'u02',
+    userId: 'u01',
     channelId: 'c02',
     timestamp: '2025-10-27T09:00:00Z',
-    content: 'Reminder: Company all-hands meeting is tomorrow at 10 AM.',
+    content: 'New outbound campaign launching next week. Targeting enterprise clients in the fintech space.',
   },
   {
     id: 'm17',
-    userId: 'u05',
+    userId: 'u03',
     channelId: 'c02',
     timestamp: '2025-10-27T11:00:00Z',
-    content: 'New coffee machine in the break room! ☕',
+    content: 'Updated the pitch deck with latest product features. Link in thread.',
   },
 
-  // Random channel
+  // Inbound channel
   {
     id: 'm18',
-    userId: 'u03',
+    userId: 'u02',
     channelId: 'c03',
     timestamp: '2025-10-27T12:00:00Z',
-    content: 'Anyone want to grab lunch? Thinking of trying that new taco place.',
+    content: 'Got 5 new inbound leads from the latest blog post. Will follow up this afternoon.',
   },
-
-  // Design channel
   {
     id: 'm19',
-    userId: 'u05',
-    channelId: 'c04',
-    timestamp: '2025-10-27T10:30:00Z',
-    content: 'Updated the design system documentation. Check it out at /design-system',
+    userId: 'u01',
+    channelId: 'c03',
+    timestamp: '2025-10-27T13:30:00Z',
+    content: 'Great! Let me know if you need any technical resources for the demos.',
+  },
+
+  // Direct Messages with Sagun (dm_u02)
+  {
+    id: 'm20',
+    userId: 'u02',
+    channelId: 'dm_u02',
+    timestamp: '2025-10-27T07:45:00Z',
+    content: 'Morning! Want to pair on the RBAC review later today?',
+  },
+  {
+    id: 'm21',
+    userId: 'u01',
+    channelId: 'dm_u02',
+    timestamp: '2025-10-27T07:50:00Z',
+    content: 'Yep, I have time after lunch. Shoot me the latest branch.',
+  },
+
+  // Direct Messages with Sam (dm_u03)
+  {
+    id: 'm22',
+    userId: 'u03',
+    channelId: 'dm_u03',
+    timestamp: '2025-10-27T10:10:00Z',
+    content: 'Metrics look better after the DB tweaks. I\'ll share the chart.',
+  },
+  {
+    id: 'm23',
+    userId: 'u01',
+    channelId: 'dm_u03',
+    timestamp: '2025-10-27T10:12:00Z',
+    content: 'Awesome, thanks! Let\'s add it to the deck.',
   },
 ];
 
 export const AI_SUMMARIES: AiSummary[] = [
   {
     channelId: 'c01',
-    content: `# Project Alpha - Daily Summary
+    content: `# Software Engineering - Daily Summary
 
 ## 🎯 Key Decisions
 - Backend API successfully deployed to staging environment
@@ -224,11 +250,9 @@ export const AI_SUMMARIES: AiSummary[] = [
 - Sprint planning for next week's release
 
 ## 👥 Active Contributors
-- Bob: Backend development and API fixes
-- Carol: QA testing and test coverage
-- David: Database optimization and PR reviews
-- Emma: Design system and user research
-- Alice: Project coordination and design feedback
+- Ronit Batra: Project coordination, design feedback, QA testing, test coverage
+- Sagun Venuganti: Backend development, API fixes, error logging
+- Sam Park (External): Database optimization, user research planning
 
 ## 🎉 Wins
 - 60% improvement in database query performance
@@ -237,11 +261,20 @@ export const AI_SUMMARIES: AiSummary[] = [
   },
   {
     channelId: 'c02',
-    content: `# General Channel Summary
+    content: `# Outbound Channel Summary
 
-## 📢 Announcements
-- Company all-hands meeting scheduled for tomorrow at 10 AM
-- New coffee machine installed in the break room`,
+## 📢 Key Updates
+- New outbound campaign launching next week targeting fintech enterprise clients
+- Pitch deck updated with latest product features`,
+  },
+  {
+    channelId: 'c03',
+    content: `# Inbound Channel Summary
+
+## 📢 Key Updates
+- 5 new inbound leads from latest blog post
+- Follow-up scheduled for this afternoon
+- Technical resources available for demos`,
   },
 ];
 

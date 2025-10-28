@@ -1,18 +1,21 @@
 'use client';
 
-import React from 'react';
-import { Hash, ChevronDown, Plus, MessageSquare, Clock, Bookmark, MoreHorizontal } from 'lucide-react';
+import React, { useState } from 'react';
+import { Hash, ChevronDown, ChevronRight } from 'lucide-react';
 import { CHANNELS, USERS, CURRENT_USER_ID } from '../../constants/mockData';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
 
 export const Sidebar: React.FC = () => {
   const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar } = useWorkspace();
+  const [channelsExpanded, setChannelsExpanded] = useState(true);
+  const [dmsExpanded, setDmsExpanded] = useState(true);
 
   const handleChannelClick = (channelId: string) => {
     setSelectedChannelId(channelId);
-    closeSidebar();
+    closeSidebar(); // Close sidebar on mobile after selection
   };
 
+  // Filter out current user from DM list
   const dmUsers = USERS.filter((user) => user.id !== CURRENT_USER_ID);
 
   return (
@@ -25,108 +28,114 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      {/* Sidebar - Slack Aubergine Theme */}
+      {/* Sidebar */}
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          w-[260px] flex flex-col h-screen
+          w-[240px] bg-[#19171D] text-[#CFC9C2] pt-0 border-r border-[#2B2C31]
+          flex flex-col h-screen
           transform transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
-        style={{ backgroundColor: '#4D394B' }}
       >
-        {/* Workspace Header */}
-        <div className="px-4 py-3 border-b border-[#3E313C]">
-          <button className="w-full flex items-center justify-between text-white hover:bg-[#3E313C] rounded px-2 py-1 transition-colors">
-            <div className="flex flex-col items-start">
-              <span className="text-[15px] font-bold">My Workspace</span>
-            </div>
-            <ChevronDown size={18} className="text-white opacity-70" />
-          </button>
-        </div>
-
-        {/* New Message Button */}
-        <div className="px-4 py-3">
-          <button className="w-full flex items-center gap-2 px-3 py-2 bg-white text-[#1D1C1D] rounded-md hover:bg-gray-100 transition-colors text-sm font-bold">
-            <MessageSquare size={18} />
-            <span>New message</span>
-          </button>
-        </div>
-
-        {/* Navigation Items */}
-        <div className="px-3 py-2 space-y-0.5">
-          <button className="w-full flex items-center gap-3 px-3 py-1.5 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors">
-            <Clock size={18} />
-            <span className="text-[15px]">Activity</span>
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-1.5 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors">
-            <Bookmark size={18} />
-            <span className="text-[15px]">Later</span>
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-1.5 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors">
-            <MoreHorizontal size={18} />
-            <span className="text-[15px]">More</span>
+        {/* Workspace name */}
+        <div className="h-[52px] px-4 mt-3 flex items-center border-b border-[#2B2C31]">
+          <button className="flex items-center justify-between w-full hover:bg-[rgba(255,255,255,0.06)] rounded px-2 py-1">
+            <h1 className="text-[15px] font-bold text-white">Golden</h1>
+            <span className="text-[20px] text-[#D1D2D3] font-light">⌄</span>
           </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-3 py-2">
+        <div className="flex-1 overflow-y-auto hide-scrollbar">
           {/* Channels section */}
-          <div className="mb-4">
-            <button className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors">
-              <ChevronDown size={14} />
-              <span className="text-[13px] font-bold">Channels</span>
+          <div className="pt-3">
+            <button 
+              onClick={() => setChannelsExpanded(!channelsExpanded)}
+              className="w-full flex items-center gap-1.5 px-3 py-[3px] hover:bg-[rgba(255,255,255,0.06)] rounded group"
+            >
+              {channelsExpanded ? (
+                <ChevronDown size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+              ) : (
+                <ChevronRight size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+              )}
+              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">Channels</h2>
             </button>
-            <div className="mt-1 space-y-px">
-              {CHANNELS.map((channel) => (
-                <button
-                  key={channel.id}
-                  onClick={() => handleChannelClick(channel.id)}
-                  className={`
-                    w-full flex items-center gap-2 px-3 py-1
-                    rounded transition-colors text-left group
-                    ${
-                      selectedChannelId === channel.id
-                        ? 'bg-[#38978D] text-white font-bold'
-                        : 'text-[#D1B8CF] hover:bg-[#3E313C]'
-                    }
-                  `}
-                >
-                  <Hash size={16} className="flex-shrink-0" />
-                  <span className="text-[15px] truncate flex-1">
-                    {channel.name}
-                  </span>
+            {channelsExpanded && (
+              <div className="mt-[2px]">
+                {CHANNELS.filter((ch) => !ch.id.startsWith('dm_')).map((channel) => (
+                  <button
+                    key={channel.id}
+                    onClick={() => handleChannelClick(channel.id)}
+                    className={`
+                      w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left group
+                      ${
+                        selectedChannelId === channel.id
+                          ? 'bg-[#1164A3] text-white'
+                          : 'text-[#D1D2D3] hover:bg-[rgba(255,255,255,0.06)]'
+                      }
+                    `}
+                  >
+                    <Hash 
+                      size={16} 
+                      className={`flex-shrink-0 ${
+                        selectedChannelId === channel.id ? 'opacity-100' : 'opacity-60'
+                      }`} 
+                    />
+                    <span className="text-[15px] truncate font-normal">{channel.name}</span>
+                  </button>
+                ))}
+                <button className="w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left text-[#ABABAD] hover:text-white hover:bg-[rgba(255,255,255,0.06)] group">
+                  <span className="text-[20px] leading-none flex-shrink-0">+</span>
+                  <span className="text-[15px] font-normal">Add channels</span>
                 </button>
-              ))}
-              <button className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors text-[15px]">
-                <Plus size={16} />
-                <span>Add channels</span>
-              </button>
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Direct Messages section */}
-          <div>
-            <button className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors">
-              <ChevronDown size={14} />
-              <span className="text-[13px] font-bold">Direct messages</span>
+          <div className="pt-4">
+            <button 
+              onClick={() => setDmsExpanded(!dmsExpanded)}
+              className="w-full flex items-center gap-1.5 px-3 py-[3px] hover:bg-[rgba(255,255,255,0.06)] rounded group"
+            >
+              {dmsExpanded ? (
+                <ChevronDown size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+              ) : (
+                <ChevronRight size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+              )}
+              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">Direct messages</h2>
             </button>
-            <div className="mt-1 space-y-px">
-              {dmUsers.map((user) => (
-                <button
-                  key={user.id}
-                  className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors text-left"
-                >
-                  <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                  <span className="text-[15px] truncate">{user.name}</span>
+            {dmsExpanded && (
+              <div className="mt-[2px]">
+                {dmUsers.map((user) => {
+                  const dmChannelId = `dm_${user.id}`;
+                  const isSelected = selectedChannelId === dmChannelId;
+                  return (
+                    <button
+                      key={user.id}
+                      onClick={() => handleChannelClick(dmChannelId)}
+                      className={`w-full flex items-center gap-2 pl-4 pr-3 py-[3px] text-left group ${
+                        isSelected ? 'bg-[#1164A3] text-white' : 'text-[#D1D2D3] hover:text-white hover:bg-[rgba(255,255,255,0.06)]'
+                      }`}
+                    >
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.name}
+                        className="w-5 h-5 rounded"
+                      />
+                      <span className="text-[15px] truncate font-normal">{user.name}</span>
+                    </button>
+                  );
+                })}
+                <button className="w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left text-[#ABABAD] hover:text-white hover:bg-[rgba(255,255,255,0.06)] group">
+                  <span className="text-[20px] leading-none flex-shrink-0">+</span>
+                  <span className="text-[15px] font-normal">Invite people</span>
                 </button>
-              ))}
-              <button className="w-full flex items-center gap-2 px-3 py-1 text-[#D1B8CF] hover:bg-[#3E313C] rounded transition-colors text-[15px]">
-                <Plus size={16} />
-                <span>Add teammates</span>
-              </button>
-            </div>
+              </div>
+            )}
           </div>
+
         </div>
       </aside>
     </>

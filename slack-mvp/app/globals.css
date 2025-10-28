@@ -1,66 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  /* Slack Color System - Aubergine Theme */
-  --sidebar-bg: #4D394B;
-  --sidebar-text: #FFFFFF;
-  --sidebar-text-muted: #D1B8CF;
-  --active-item: #38978D;
-  --active-text: #FFFFFF;
-  --main-bg: #FFFFFF;
-  --main-text: #1D1C1D;
-  --main-text-muted: #616061;
-  --mention-badge: #E01E5A;
-  --hover-bg: #3E313C;
-  --border-color: #E0E0E0;
-  
-  /* Slack Brand Colors */
-  --slack-blue: #36C5F0;
-  --slack-green: #2EB67D;
-  --slack-red: #E01E5A;
-  --slack-yellow: #ECB22E;
+  /* Slack exact color palette from screenshot */
+  --primary-dark: #1A1D21;
+  --sidebar-dark: #3F0F3F;
+  --main-bg: #1A1D21;
+  --chat-bg: #232529;
+  --primary-light: #FFFFFF;
+  --accent: #1264A3;
+  --accent-hover: #0B4C8C;
+  --text-primary: #D1D2D3;
+  --text-secondary: #ABABAD;
+  --text-inverted: #D1D2D3;
+  --border-subtle: #565856;
+  --channel-hover: rgba(255, 255, 255, 0.1);
+  --channel-selected: #1164A3;
+  --message-hover: rgba(255, 255, 255, 0.04);
+  --input-background: #1A1D21;
+  --input-border: #565856;
+  --input-border-hover: #868686;
+  --button-inverted: rgba(255, 255, 255, 0.12);
+  --button-inverted-hover: rgba(255, 255, 255, 0.18);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --scrollbar-track: transparent;
 }
 
 @theme inline {
-  --color-sidebar-bg: var(--sidebar-bg);
-  --color-sidebar-text: var(--sidebar-text);
-  --color-active-item: var(--active-item);
-  --color-main-bg: var(--main-bg);
-  --color-main-text: var(--main-text);
-  --color-mention-badge: var(--mention-badge);
-  --color-slack-blue: var(--slack-blue);
-  --font-lato: 'Lato', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-inverted: var(--text-inverted);
+  --color-border-subtle: var(--border-subtle);
+  --font-inter: 'Inter', sans-serif;
 }
 
 body {
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
+  background: var(--primary-dark);
 }
 
-/* Scrollbar styling */
+html {
+  background: var(--primary-dark);
+}
+
+/* Slack-style scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--scrollbar-track);
   border-radius: 4px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Hide scrollbar when not hovering */
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.hide-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
 }
