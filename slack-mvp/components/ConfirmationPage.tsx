@@ -84,8 +84,8 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
   return (
     <div className="min-h-screen w-full bg-white text-gray-900 py-12 px-4 flex flex-col items-center">
       {/* LOGO */}
-      <div className="flex flex-row items-center gap-2 text-xl font-bold mb-12">
-        <img src="/slack.png" alt="logo" className="w-26 h-9" />
+      <div className="flex flex-row items-center gap-2 text-xl font-bold -mt-4">
+        <img src="/stack.png" alt="logo" className="w-36 h-26" />
       </div>
 
       <div className="w-full max-w-[550px]">
