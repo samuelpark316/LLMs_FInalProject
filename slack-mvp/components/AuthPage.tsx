@@ -1,30 +1,51 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import ConfirmationPage from "./ConfirmationPage";
 
 export default function AuthPage() {
-  const { login } = useAuth();
-
-  const [stage, setStage] = useState<"email" | "password">("email");
+  const [stage, setStage] = useState<"email" | "confirmation">("email");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   function handleEmailContinue(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStage("password");
-    setError("");
-  }
 
-  function handlePasswordLogin(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const res = login(email, password);
-    if (!res.ok) {
-      setError(res.error || "Login failed");
+    // If captcha not shown yet, show loading then captcha
+    if (!showCaptcha) {
+      setIsLoadingCaptcha(true);
+
+      // Simulate loading delay, then show captcha
+      setTimeout(() => {
+        setIsLoadingCaptcha(false);
+        setShowCaptcha(true);
+      }, 1500); // 1.5 second loading
+      return;
+    }
+
+    // If captcha shown but not verified, do nothing
+    if (showCaptcha && !isCaptchaVerified) {
+      return;
+    }
+
+    // If captcha verified, proceed to confirmation
+    if (isCaptchaVerified) {
+      setStage("confirmation");
     }
   }
 
+  function handleCaptchaCheck() {
+    setIsCaptchaVerified(true);
+  }
+
+  // If on confirmation stage, show confirmation page
+  if (stage === "confirmation") {
+    return <ConfirmationPage email={email} />;
+  }
+
+  // Otherwise show email page
   return (
     <div className="min-h-screen w-full bg-white text-gray-900 py-12 px-4 flex flex-col items-center">
       {/* LOGO */}
@@ -45,9 +66,12 @@ export default function AuthPage() {
       {/* FORM CARD AREA */}
       <div className="w-full flex flex-col items-center max-w-[400px]">
         {stage === "email" && (
-          <form onSubmit={handleEmailContinue} className="flex flex-col mb-6">
+          <form
+            onSubmit={handleEmailContinue}
+            className="flex flex-col mb-6 w-full"
+          >
             <input
-              className="w-90 rounded-xl border border-gray-300 px-2 py-2 text-base focus:outline-none focus:ring-4 focus:ring-blue-200 focus:ring-offset-0 focus:border-gray-300 mb-4"
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-blue-200 focus:ring-offset-0 focus:border-gray-300 mb-4"
               placeholder="name@work-email.com"
               type="email"
               value={email}
@@ -55,65 +79,49 @@ export default function AuthPage() {
               required
             />
 
-            <button
-              type="submit"
-              className="w-90 bg-[#592F63] text-white text-lg font-semibold rounded-xl py-2 hover:bg-[#6A3975] transition text-base"
-            >
-              Continue
-            </button>
-          </form>
-        )}
+            {/* Loading Spinner */}
+            {isLoadingCaptcha && (
+              <div className="flex justify-center items-center mb-4 py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#592F63]"></div>
+              </div>
+            )}
 
-        {stage === "password" && (
-          <form onSubmit={handlePasswordLogin} className="flex flex-col">
-            <div className="text-left mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Email
-              </label>
-              <input
-                className="w-full rounded-md border border-gray-400 px-4 py-3 text-base bg-gray-100 text-gray-700"
-                value={email}
-                disabled
-              />
-            </div>
-
-            <div className="text-left mb-4">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Password
-              </label>
-              <input
-                className="w-full rounded-md border border-gray-400 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Your password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                (hardcoded demo: password is{" "}
-                <code className="bg-gray-100 px-1 rounded">testing</code>)
-              </p>
-            </div>
-
-            {error && (
-              <div className="text-red-600 text-sm text-center bg-red-50 py-2 rounded mb-4">
-                {error}
+            {/* reCAPTCHA Checkbox */}
+            {showCaptcha && (
+              <div className="mb-4 p-4 border-2 border-gray-300 rounded-lg bg-gray-50">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isCaptchaVerified}
+                    onChange={handleCaptchaCheck}
+                    className="w-6 h-6 cursor-pointer"
+                  />
+                  <span className="text-base font-medium">
+                    I&apos;m not a robot
+                  </span>
+                  <div className="ml-auto flex flex-col items-center">
+                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                        fill="#1a73e8"
+                      />
+                    </svg>
+                    <span className="text-xs text-gray-500">reCAPTCHA</span>
+                  </div>
+                </label>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full bg-purple-700 text-white font-semibold rounded-md py-3 hover:bg-purple-800 transition text-base mb-4"
+              disabled={showCaptcha && !isCaptchaVerified}
+              className={`w-full text-white text-lg font-semibold rounded-xl py-3 transition ${
+                showCaptcha && !isCaptchaVerified
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#592F63] hover:bg-[#6A3975]"
+              }`}
             >
-              Sign in
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setStage("email")}
-              className="text-sm text-purple-700 hover:underline"
-            >
-              Back
+              Continue
             </button>
           </form>
         )}
