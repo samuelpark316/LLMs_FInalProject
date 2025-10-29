@@ -188,7 +188,7 @@ export default function AuthPage() {
 
       {/* ALREADY USING SLACK */}
       <div className="text-sm text-gray-600 mt-10">
-        <p className="mb-1">Already using Slack?</p>
+        <p className="mb-1">Already using Stack?</p>
         <button className="text-blue-600 hover:underline font-medium">
           Sign in to an existing workspace
         </button>
