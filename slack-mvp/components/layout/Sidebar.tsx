@@ -1,19 +1,24 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Hash, ChevronDown, ChevronRight, LogOut } from 'lucide-react';
-import { CHANNELS, USERS, CURRENT_USER_ID } from '../../constants/mockData';
-import { useWorkspace } from '../../contexts/WorkspaceContext';
+import React, { useState } from "react";
+import { Hash, ChevronDown, ChevronRight, LogOut } from "lucide-react";
+import { CHANNELS, USERS, CURRENT_USER_ID } from "../../constants/mockData";
+import { useWorkspace } from "../../contexts/WorkspaceContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export const Sidebar: React.FC = () => {
-  const { selectedChannelId, setSelectedChannelId, isSidebarOpen, closeSidebar, closeSearchModal, closeSearchDropdown } = useWorkspace();
+  const {
+    selectedChannelId,
+    setSelectedChannelId,
+    isSidebarOpen,
+    closeSidebar,
+    closeSearchModal,
+    closeSearchDropdown,
+  } = useWorkspace();
+  const { logout } = useAuth();
   const [channelsExpanded, setChannelsExpanded] = useState(true);
   const [dmsExpanded, setDmsExpanded] = useState(true);
   const currentUser = USERS.find((u) => u.id === CURRENT_USER_ID);
-  const logout = () => {
-    // Placeholder logout for demo; in a real app, call auth signOut
-    console.log('Logout clicked');
-  };
 
   const handleChannelClick = (channelId: string) => {
     setSelectedChannelId(channelId);
@@ -61,43 +66,57 @@ export const Sidebar: React.FC = () => {
         <div className="flex-1 overflow-y-auto hide-scrollbar">
           {/* Channels section */}
           <div className="pt-3">
-            <button 
+            <button
               onClick={() => setChannelsExpanded(!channelsExpanded)}
               className="w-full flex items-center gap-1.5 px-3 py-[3px] hover:bg-[rgba(255,255,255,0.06)] rounded group"
             >
               {channelsExpanded ? (
-                <ChevronDown size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+                <ChevronDown
+                  size={14}
+                  className="text-[#ABABAD] group-hover:text-white shrink-0"
+                />
               ) : (
-                <ChevronRight size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+                <ChevronRight
+                  size={14}
+                  className="text-[#ABABAD] group-hover:text-white shrink-0"
+                />
               )}
-              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">Channels</h2>
+              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">
+                Channels
+              </h2>
             </button>
             {channelsExpanded && (
               <div className="mt-[2px]">
-                {CHANNELS.filter((ch) => !ch.id.startsWith('dm_')).map((channel) => (
-                  <button
-                    key={channel.id}
-                    onClick={() => handleChannelClick(channel.id)}
-                    className={`
+                {CHANNELS.filter((ch) => !ch.id.startsWith("dm_")).map(
+                  (channel) => (
+                    <button
+                      key={channel.id}
+                      onClick={() => handleChannelClick(channel.id)}
+                      className={`
                       w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left group
                       ${
                         selectedChannelId === channel.id
-                          ? 'bg-[#1164A3] text-white'
-                          : 'text-[#D1D2D3] hover:bg-[rgba(255,255,255,0.06)]'
+                          ? "bg-[#1164A3] text-white"
+                          : "text-[#D1D2D3] hover:bg-[rgba(255,255,255,0.06)]"
                       }
                     `}
-                  >
-                    <Hash 
-                      size={16} 
-                      className={`flex-shrink-0 ${
-                        selectedChannelId === channel.id ? 'opacity-100' : 'opacity-60'
-                      }`} 
-                    />
-                    <span className="text-[15px] truncate font-normal">{channel.name}</span>
-                  </button>
-                ))}
+                    >
+                      <Hash
+                        size={16}
+                        className={`shrink-0 ${
+                          selectedChannelId === channel.id
+                            ? "opacity-100"
+                            : "opacity-60"
+                        }`}
+                      />
+                      <span className="text-[15px] truncate font-normal">
+                        {channel.name}
+                      </span>
+                    </button>
+                  )
+                )}
                 <button className="w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left text-[#ABABAD] hover:text-white hover:bg-[rgba(255,255,255,0.06)] group">
-                  <span className="text-[20px] leading-none flex-shrink-0">+</span>
+                  <span className="text-[20px] leading-none shrink-0">+</span>
                   <span className="text-[15px] font-normal">Add channels</span>
                 </button>
               </div>
@@ -106,16 +125,24 @@ export const Sidebar: React.FC = () => {
 
           {/* Direct Messages section */}
           <div className="pt-4">
-            <button 
+            <button
               onClick={() => setDmsExpanded(!dmsExpanded)}
               className="w-full flex items-center gap-1.5 px-3 py-[3px] hover:bg-[rgba(255,255,255,0.06)] rounded group"
             >
               {dmsExpanded ? (
-                <ChevronDown size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+                <ChevronDown
+                  size={14}
+                  className="text-[#ABABAD] group-hover:text-white shrink-0"
+                />
               ) : (
-                <ChevronRight size={14} className="text-[#ABABAD] group-hover:text-white flex-shrink-0" />
+                <ChevronRight
+                  size={14}
+                  className="text-[#ABABAD] group-hover:text-white shrink-0"
+                />
               )}
-              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">Direct messages</h2>
+              <h2 className="text-[15px] font-normal text-[#ABABAD] group-hover:text-white">
+                Direct messages
+              </h2>
             </button>
             {dmsExpanded && (
               <div className="mt-[2px]">
@@ -127,7 +154,9 @@ export const Sidebar: React.FC = () => {
                       key={user.id}
                       onClick={() => handleChannelClick(dmChannelId)}
                       className={`w-full flex items-center gap-2 pl-4 pr-3 py-[3px] text-left group ${
-                        isSelected ? 'bg-[#1164A3] text-white' : 'text-[#D1D2D3] hover:text-white hover:bg-[rgba(255,255,255,0.06)]'
+                        isSelected
+                          ? "bg-[#1164A3] text-white"
+                          : "text-[#D1D2D3] hover:text-white hover:bg-[rgba(255,255,255,0.06)]"
                       }`}
                     >
                       <img
@@ -135,18 +164,19 @@ export const Sidebar: React.FC = () => {
                         alt={user.name}
                         className="w-5 h-5 rounded"
                       />
-                      <span className="text-[15px] truncate font-normal">{user.name}</span>
+                      <span className="text-[15px] truncate font-normal">
+                        {user.name}
+                      </span>
                     </button>
                   );
                 })}
                 <button className="w-full flex items-center gap-1.5 pl-4 pr-3 py-[3px] text-left text-[#ABABAD] hover:text-white hover:bg-[rgba(255,255,255,0.06)] group">
-                  <span className="text-[20px] leading-none flex-shrink-0">+</span>
+                  <span className="text-[20px] leading-none shrink-0">+</span>
                   <span className="text-[15px] font-normal">Invite people</span>
                 </button>
               </div>
             )}
           </div>
-
         </div>
 
         {/* User section with logout - Fixed at bottom */}
