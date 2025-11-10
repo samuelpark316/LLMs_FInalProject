@@ -1,58 +1,82 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import ConfirmationPage from "./ConfirmationPage";
 import { sendVerificationCode, signInWithOAuth } from "../lib/auth";
 
 export default function AuthPage() {
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [stage, setStage] = useState<"email" | "confirmation">("email");
   const [email, setEmail] = useState("");
-  const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [isSendingCode, setIsSendingCode] = useState(false);
 
   async function handleEmailContinue(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // If captcha not shown yet, show loading then captcha
+    // If captcha not shown yet, show it
     if (!showCaptcha) {
-      setIsLoadingCaptcha(true);
-
-      // Simulate loading delay, then show captcha
-      setTimeout(() => {
-        setIsLoadingCaptcha(false);
-        setShowCaptcha(true);
-      }, 1500); // 1.5 second loading
+      setShowCaptcha(true);
       return;
     }
 
     // If captcha shown but not verified, do nothing
-    if (showCaptcha && !isCaptchaVerified) {
+    if (showCaptcha && !recaptchaToken) {
+      setError("Please complete the reCAPTCHA verification");
       return;
     }
 
-    // If captcha verified, send verification code
-    if (isCaptchaVerified) {
+    // If captcha verified, verify token and send verification code
+    if (recaptchaToken) {
       setIsSendingCode(true);
       setError("");
 
-      const result = await sendVerificationCode(email);
+      try {
+        // Verify reCAPTCHA token on server
+        const verifyResponse = await fetch("/api/verify-recaptcha", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: recaptchaToken }),
+        });
 
-      if (result.success) {
-        console.log("Verification code sent! Code:", result.code); // For demo/testing
-        setStage("confirmation");
-      } else {
-        setError(result.error || "Failed to send verification code");
+        const verifyData = await verifyResponse.json();
+
+        if (!verifyData.success) {
+          setError("reCAPTCHA verification failed. Please try again.");
+          setRecaptchaToken(null);
+          recaptchaRef.current?.reset();
+          setIsSendingCode(false);
+          return;
+        }
+
+        // Send verification code
+        const result = await sendVerificationCode(email);
+
+        if (result.success) {
+          console.log("Verification code sent! Code:", result.code); // For demo/testing
+          setStage("confirmation");
+        } else {
+          setError(result.error || "Failed to send verification code");
+        }
+      } catch (error) {
+        console.error("Error during verification:", error);
+        setError("An error occurred. Please try again.");
       }
 
       setIsSendingCode(false);
     }
   }
 
-  function handleCaptchaCheck() {
-    setIsCaptchaVerified(true);
+  function handleRecaptchaChange(token: string | null) {
+    setRecaptchaToken(token);
+    if (token) {
+      setError(""); // Clear any errors when captcha is completed
+    }
   }
 
   async function handleOAuthLogin(provider: "google" | "apple") {
@@ -111,44 +135,23 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Loading Spinner */}
-            {isLoadingCaptcha && (
-              <div className="flex justify-center items-center mb-4 py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#592F63]"></div>
-              </div>
-            )}
-
-            {/* reCAPTCHA Checkbox */}
+            {/* Real Google reCAPTCHA */}
             {showCaptcha && (
-              <div className="mb-4 p-4 border-2 border-gray-300 rounded-lg bg-gray-50">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isCaptchaVerified}
-                    onChange={handleCaptchaCheck}
-                    className="w-6 h-6 cursor-pointer"
-                  />
-                  <span className="text-base font-medium">
-                    I&apos;m not a robot
-                  </span>
-                  <div className="ml-auto flex flex-col items-center">
-                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                        fill="#1a73e8"
-                      />
-                    </svg>
-                    <span className="text-xs text-gray-500">reCAPTCHA</span>
-                  </div>
-                </label>
+              <div className="flex justify-center mb-4">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                  onChange={handleRecaptchaChange}
+                  theme="light"
+                />
               </div>
             )}
 
             <button
               type="submit"
-              disabled={(showCaptcha && !isCaptchaVerified) || isSendingCode}
+              disabled={(showCaptcha && !recaptchaToken) || isSendingCode}
               className={`w-full text-white text-lg font-semibold rounded-xl py-3 transition ${
-                (showCaptcha && !isCaptchaVerified) || isSendingCode
+                (showCaptcha && !recaptchaToken) || isSendingCode
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#592F63] hover:bg-[#6A3975]"
               }`}
