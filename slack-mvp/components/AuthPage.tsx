@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import ConfirmationPage from "./ConfirmationPage";
+import { sendVerificationCode, signInWithOAuth } from "../lib/auth";
 
 export default function AuthPage() {
   const [stage, setStage] = useState<"email" | "confirmation">("email");
@@ -9,8 +10,10 @@ export default function AuthPage() {
   const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [error, setError] = useState("");
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
-  function handleEmailContinue(e: FormEvent<HTMLFormElement>) {
+  async function handleEmailContinue(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     // If captcha not shown yet, show loading then captcha
@@ -30,14 +33,36 @@ export default function AuthPage() {
       return;
     }
 
-    // If captcha verified, proceed to confirmation
+    // If captcha verified, send verification code
     if (isCaptchaVerified) {
-      setStage("confirmation");
+      setIsSendingCode(true);
+      setError("");
+
+      const result = await sendVerificationCode(email);
+
+      if (result.success) {
+        console.log("Verification code sent! Code:", result.code); // For demo/testing
+        setStage("confirmation");
+      } else {
+        setError(result.error || "Failed to send verification code");
+      }
+
+      setIsSendingCode(false);
     }
   }
 
   function handleCaptchaCheck() {
     setIsCaptchaVerified(true);
+  }
+
+  async function handleOAuthLogin(provider: "google" | "apple") {
+    setError("");
+    const result = await signInWithOAuth(provider);
+
+    if (!result.success) {
+      setError(result.error || `Failed to sign in with ${provider}`);
+    }
+    // If successful, user will be redirected to OAuth provider
   }
 
   // If on confirmation stage, show confirmation page
@@ -77,7 +102,14 @@ export default function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isSendingCode}
             />
+
+            {error && (
+              <div className="text-red-600 text-sm text-center bg-red-50 py-2 rounded mb-4">
+                {error}
+              </div>
+            )}
 
             {/* Loading Spinner */}
             {isLoadingCaptcha && (
@@ -114,14 +146,14 @@ export default function AuthPage() {
 
             <button
               type="submit"
-              disabled={showCaptcha && !isCaptchaVerified}
+              disabled={(showCaptcha && !isCaptchaVerified) || isSendingCode}
               className={`w-full text-white text-lg font-semibold rounded-xl py-3 transition ${
-                showCaptcha && !isCaptchaVerified
+                (showCaptcha && !isCaptchaVerified) || isSendingCode
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#592F63] hover:bg-[#6A3975]"
               }`}
             >
-              Continue
+              {isSendingCode ? "Sending code..." : "Continue"}
             </button>
           </form>
         )}
@@ -138,6 +170,7 @@ export default function AuthPage() {
       {/* OAUTH BUTTONS */}
       <div className="flex flex-row gap-3 mb-6 w-[350px]">
         <button
+          onClick={() => handleOAuthLogin("google")}
           className="flex-1 flex border-2 items-center justify-center gap-2 border-gray-300 rounded-lg py-1 text-sm font-medium hover:bg-gray-50 transition"
           type="button"
         >
@@ -163,6 +196,7 @@ export default function AuthPage() {
         </button>
 
         <button
+          onClick={() => handleOAuthLogin("apple")}
           className="flex-1 flex items-center justify-center gap-2 border-2 border-gray-300 rounded-lg py-1 text-sm font-medium hover:bg-gray-50 transition"
           type="button"
         >

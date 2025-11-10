@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { verifyCode } from "../lib/auth";
 
 interface ConfirmationPageProps {
   email: string;
@@ -20,8 +21,6 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
   ]);
   const [error, setError] = useState("");
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
-
-  const CORRECT_CODE = "123456";
 
   function handleDigitChange(index: number, value: string) {
     // Only allow numbers
@@ -42,7 +41,7 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
 
     // Check if all 6 digits are filled
     if (newCode.every((d) => d !== "") && newCode.join("").length === 6) {
-      verifyCode(newCode.join(""));
+      verifyCodeSubmit(newCode.join(""));
     }
   }
 
@@ -57,28 +56,31 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
     }
   }
 
-  function verifyCode(code: string) {
+  async function verifyCodeSubmit(code: string) {
     setIsVerifyingCode(true);
     setError("");
 
-    // Simulate verification delay
-    setTimeout(() => {
-      setIsVerifyingCode(false);
+    // Simulate verification delay for UX
+    setTimeout(async () => {
+      const result = await verifyCode(email, code);
 
-      if (code === CORRECT_CODE) {
-        // Code is correct, log in with dummy credentials
-        const res = login("ronit@golden.vc", "testing");
-        if (!res.ok) {
-          setError(res.error || "Login failed");
+      if (result.success) {
+        // Code is correct, log in
+        const loginResult = await login(email);
+        if (!loginResult.ok) {
+          setError(loginResult.error || "Login failed");
+          setIsVerifyingCode(false);
         }
+        // If login successful, user will be redirected automatically
       } else {
-        setError("Invalid code. Please try again.");
+        setError(result.error || "Invalid code. Please try again.");
+        setIsVerifyingCode(false);
         // Clear all inputs on error
         setConfirmationCode(["", "", "", "", "", ""]);
         const firstInput = document.getElementById("digit-0");
         firstInput?.focus();
       }
-    }, 1500); // 1.5 second verification
+    }, 1500); // 1.5 second verification delay
   }
 
   return (
@@ -151,14 +153,17 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
 
           {/* Demo hint */}
           <p className="text-xs text-gray-400 mb-6">
-            (Demo code:{" "}
-            <code className="bg-gray-100 px-2 py-1 rounded">123456</code>)
+            Check your browser console for the verification code (or check your
+            email in production)
           </p>
         </div>
 
         {/* Email Buttons */}
         <div className="flex gap-4 justify-center mb-6">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition border border-gray-300">
+          <button
+            onClick={() => window.open("https://mail.google.com", "_blank")}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition border border-gray-300"
+          >
             {/* Gmail Logo */}
             <svg className="w-5 h-5" viewBox="0 0 256 193" fill="none">
               <path
@@ -184,7 +189,12 @@ export default function ConfirmationPage({ email }: ConfirmationPageProps) {
             </svg>
             <span>Open Gmail</span>
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition border border-gray-300">
+          <button
+            onClick={() =>
+              window.open("https://outlook.live.com/mail/", "_blank")
+            }
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition border border-gray-300"
+          >
             {/* Outlook Logo */}
             <svg className="w-5 h-5" viewBox="0 0 256 256" fill="none">
               <path

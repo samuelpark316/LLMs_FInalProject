@@ -1,15 +1,19 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { AuthUser, LoginResult } from "../types";
-
-// Hardcoded allowed credentials
-const VALID_EMAIL = "ronit@golden.vc";
-const VALID_PASSWORD = "testing";
+import { getUserByEmail } from "../lib/auth";
+import { supabase } from "../lib/supabaseClient";
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (email: string, password: string) => LoginResult;
+  login: (email: string) => Promise<LoginResult>;
   logout: () => void;
 }
 
@@ -17,19 +21,64 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null); // null = logged out
+  const [loading, setLoading] = useState(true);
 
-  function login(email: string, password: string): LoginResult {
-    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-      const authedUser: AuthUser = { email };
-      setUser(authedUser);
-      return { ok: true };
-    } else {
-      return { ok: false, error: "Invalid email or password" };
+  // Check for existing OAuth session on mount
+  useEffect(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({ email: session.user.email || "" });
+      }
+      setLoading(false);
+    });
+
+    // Listen for auth changes (OAuth callbacks, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({ email: session.user.email || "" });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function login(email: string): Promise<LoginResult> {
+    try {
+      // Verify user exists in database
+      const dbUser = await getUserByEmail(email);
+
+      if (dbUser) {
+        const authedUser: AuthUser = { email };
+        setUser(authedUser);
+        return { ok: true };
+      } else {
+        return { ok: false, error: "User not found" };
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      return { ok: false, error: "Login failed" };
     }
   }
 
-  function logout() {
+  async function logout() {
+    // Sign out from Supabase (for OAuth users)
+    await supabase.auth.signOut();
     setUser(null);
+  }
+
+  // Show loading state while checking for existing session
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#592F63]"></div>
+      </div>
+    );
   }
 
   return (
