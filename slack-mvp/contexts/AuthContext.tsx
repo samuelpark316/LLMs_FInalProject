@@ -50,15 +50,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string): Promise<LoginResult> {
     try {
-      // Verify user exists in database
-      const dbUser = await getUserByEmail(email);
-
-      if (dbUser) {
-        const authedUser: AuthUser = { email };
-        setUser(authedUser);
+      // Check if there's an active Supabase session (created by verifyCode)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user && session.user.email === email) {
+        // Session exists and matches the email - user is already logged in
+        // The onAuthStateChange listener will have already set the user
         return { ok: true };
       } else {
-        return { ok: false, error: "User not found" };
+        // No session found - verification might have failed
+        return { ok: false, error: "Please verify your code first" };
       }
     } catch (error) {
       console.error("Login error:", error);
